@@ -3,6 +3,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
+const _ = require("lodash");
 
 const posts = [];
 
@@ -24,6 +25,8 @@ app.get("/", function(req, res) {
     firstContent: aboutContent, 
     posts: posts
   });
+
+
 });
 
 app.get("/about", function(req, res) {
@@ -39,6 +42,30 @@ app.get("/compose", function(req, res) {
   res.render("compose");  
 });
 
+app.get("/posts/:postName", function(req, res) {
+  let requestedTitle = req.params.postName;  
+  requestedTitle = _.kebabCase(requestedTitle);
+
+  posts.forEach(function(post) {
+    let storedTitle = post.title;
+    storedTitle = _.kebabCase(storedTitle);
+
+    if (requestedTitle === storedTitle) {
+      console.log("Match found!");
+    } else {
+      console.log("Not a match!");
+    };
+
+  });
+
+  res.render("post", {
+    blogTitle: requestedTitle,
+    blogBody: "This is my body!"
+  });
+
+}); 
+
+
 app.post("/compose", function(req, res) {
 
 const post = {
@@ -49,15 +76,7 @@ const post = {
 posts.push(post);
 res.redirect('/');
 
-});
-
-
-
-
-
-
-
-
+}); 
 
 
 
